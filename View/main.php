@@ -6,6 +6,7 @@
 
         <form action="<?=MYSITE?>main/loadList" method="post" enctype="multipart/form-data">
             <input class="btn btn-lg btn-success" type="file" name="prodList" id="inp"/>
+            <input type="submit" />
         </form>
     </div>
 

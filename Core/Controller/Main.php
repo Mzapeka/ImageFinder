@@ -20,7 +20,7 @@ class Main extends Controller {
 
     public function loadList(){
         $this->model->getImgList();
-        $this->view->loadImgList();
+        //$this->view->loadImgList();
     }
 
 } 
