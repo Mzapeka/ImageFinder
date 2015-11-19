@@ -17,23 +17,45 @@ class Main {
 
     public function getImgList(){
         //var_dump($_FILES);
+        set_time_limit(0);
         $productList = $this->getInfoFromFile();
-/*        foreach ($productList as $product){
-            $res[] = $this->Image_Crawler($product);
-        }
-        var_dump($res);*/
+        for ($j=0; $j < 20; $j++) {
+            $result = $this->getLinks($productList[$j], 5);
 
-        $json = $this->get_url_contents('http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q='.urlencode($productList[1]));
-
-        $data = json_decode($json);
-
-        foreach ($data->responseData->results as $result) {
-            $re[] = array('url' => $result->url, 'alt' => $result->title);
         }
 
+        echo "<pre>";
+        print_r($result);
+        echo "</pre>";
+
+        /*$img = file_get_contents($arr[0]);
+        file_put_contents('1.jpg',$img);
+        echo $img;*/
+
+        //$res[] = $this->Image_Crawler($productList[0]);
+        //var_dump($res);
+         /*for ($i = 0; $i<2; $i++){
+        $json = $this->get_url_contents('http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q='.urlencode($productList[0]));
+
+        $dataw[] = json_decode($json);*/
+         //}
+        //var_dump($dataw);
+
+        /*foreach ($dataw as $val){
+            foreach ($val->responseData->results as $result) {
+                $re[] = array('url' => $result->url, 'alt' => $result->title);
+            }
+        }*/
+
+      /*  include('Core/System/GoogleImages.php');
+        $gimage = new \System\GoogleImages();
+        $gimage->get_images(urlencode($productList[1]), 4, 5);*/
+        /*echo "<pre>";
         print_r($re);
-
+        echo "</pre>";*/
     }
+
+
 
     private function getInfoFromFile(){
         require_once ('Core/System/Classes/PHPExcel/IOFactory.php');
@@ -48,25 +70,22 @@ class Main {
         return $productList;
     }
 
-    private function Image_Crawler($product){
-        $url = "http://images.google.ie/images?as_q=##query##&hl=it&imgtbs=z&btnG=Cerca+con+Google&as_epq=&as_oq=&as_eq=&imgtype=&imgsz=m&imgw=&imgh=&imgar=&as_filetype=&imgc=&as_sitesearch=&as_rights=&safe=images&as_st=y";
-        $web_page = file_get_contents( str_replace("##query##",urlencode($product), $url ));
-        //echo(str_replace("##query##",urlencode($k), $url));
-        //echo $web_page;
-        $tieni = stristr($web_page,"dyn.setResults(");
-        $tieni = str_replace( "dyn.setResults(","", str_replace(stristr($tieni,");"),"",$tieni) );
-        $tieni = str_replace("[]","",$tieni);
-        $m = preg_split("/[\[\]]/",$tieni);
-        $x = array();
-        for($i=0;$i<count($m);$i++) {
-            $m[$i] = str_replace("/imgres?imgurl\\x3d","",$m[$i]);
-            $m[$i] = str_replace(stristr($m[$i],"\\x26imgrefurl"),"",$m[$i]);
-            $m[$i] = preg_replace("/^\"/i","",$m[$i]);
-            $m[$i] = preg_replace("/^,/i","",$m[$i]);
-            if ($m[$i]!="") array_push($x,$m[$i]);
+private function getLinks($request, $numLinks){
+    require_once 'Core/System/simple_html_dom.php';
+    $url = "http://images.google.ie/images?as_q=##query##&hl=it&imgtbs=z&btnG=Cerca+con+Google&as_epq=&as_oq=&as_eq=&imgtype=&imgsz=m&imgw=&imgh=&imgar=&as_filetype=&imgc=&as_sitesearch=&as_rights=&safe=images&as_st=y";
+    $web_page = file_get_contents( str_replace("##query##",urlencode($request), $url ));
+    $content = str_get_html($web_page); // - создаем объект DOM из строки.
+    $images = $content->find('#ires td a img');
+    $i = 0;
+    foreach ($images as $image){
+        $arr[] = $image->src;
+        if ($i == $numLinks-1){
+            break;
         }
-        return $x;
+        $i++;
     }
+    return $arr;
+}
 
     function get_url_contents($url) {
         $crl = curl_init();
