@@ -19,4 +19,10 @@ class Main extends View {
         $this->loadfooter();
     }
 
+    public function mainView($images){
+        $this->loadHeader();
+        include_once("View/productList.php");
+        $this->loadfooter();
+    }
+
 } 

@@ -19,8 +19,13 @@ class Main extends Controller {
     }
 
     public function loadList(){
-        $this->model->getImgList();
+        $images = $this->model->getImgList();
+        $this->view->mainView($images);
         //$this->view->loadImgList();
+    }
+
+    public function writeImg(){
+        $this->model->imgWriteAction();
     }
 
 } 

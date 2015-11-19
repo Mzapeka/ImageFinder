@@ -19,14 +19,14 @@ class Main {
         //var_dump($_FILES);
         set_time_limit(0);
         $productList = $this->getInfoFromFile();
-        for ($j=0; $j < 20; $j++) {
-            $result = $this->getLinks($productList[$j], 5);
-
+        $result = array();
+        for ($j=0; $j < 5; $j++) {
+            array_push($result, $this->getLinks($productList[$j], 5));
         }
-
-        echo "<pre>";
+        return $result;
+        /*echo "<pre>";
         print_r($result);
-        echo "</pre>";
+        echo "</pre>";*/
 
         /*$img = file_get_contents($arr[0]);
         file_put_contents('1.jpg',$img);
@@ -78,7 +78,7 @@ private function getLinks($request, $numLinks){
     $images = $content->find('#ires td a img');
     $i = 0;
     foreach ($images as $image){
-        $arr[] = $image->src;
+        $arr[$request][] = $image->src;
         if ($i == $numLinks-1){
             break;
         }
@@ -98,6 +98,21 @@ private function getLinks($request, $numLinks){
         $ret = curl_exec($crl);
         curl_close($crl);
         return $ret;
+    }
+
+    function imgWriteAction(){
+        if (isset($_POST['link'])){
+            if(is_file("images/".$_POST['imgId'].".jpg")){
+                unlink("images/".$_POST['imgId'].".jpg");
+                return 'ok';
+            }
+            else{
+                $image = file_get_contents($_POST['link']);
+                file_put_contents("images/".$_POST['imgId'].".jpg",$image);
+                return 'ok';
+            }
+        }
+        return 'false';
     }
 
 
