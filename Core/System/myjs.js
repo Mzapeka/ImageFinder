@@ -8,17 +8,18 @@ $(document).ready(function(){
         var link = $('#' + id).find('.img-rounded').attr('src');
         //alert (id +" "+ link);
         $.post(
-            'http://ImageFinder/main/writeImg',
+            'http://imagecrawler.azurewebsites.net/main/writeImg',
             {'link': link,
             'imgId': id},
             function result(data){
+                //alert(data);
                 if (data == 'false'){
                     alert('error');
                 }
             }
         )
             .error(function(){
-                alert('Ошибка соединения. Данные не переданы');
+                alert('Connection error. Data dosn\'t transfered');
             })
     })
 })

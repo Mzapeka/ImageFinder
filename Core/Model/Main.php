@@ -17,45 +17,42 @@ class Main {
 
     public function getImgList(){
         //var_dump($_FILES);
+        // Set output quantity of pictures (max - 20 pcs.)
+        $imageNumber = 5;
         set_time_limit(0);
+        // Get requests from Excel file
         $productList = $this->getInfoFromFile();
         $result = array();
-        for ($j=0; $j < 5; $j++) {
-            array_push($result, $this->getLinks($productList[$j], 5));
+        // Getting the links to array
+        if (LIMIT){
+            for ($j=0; $j < LIMIT; $j++) {
+                array_push($result, $this->getLinks($productList[$j], $imageNumber));
+            }
+        }
+        else {
+            foreach($productList as $product){
+                array_push($result, $this->getLinks($product, $imageNumber));
+            }
         }
         return $result;
-        /*echo "<pre>";
-        print_r($result);
-        echo "</pre>";*/
-
-        /*$img = file_get_contents($arr[0]);
-        file_put_contents('1.jpg',$img);
-        echo $img;*/
-
-        //$res[] = $this->Image_Crawler($productList[0]);
-        //var_dump($res);
-         /*for ($i = 0; $i<2; $i++){
-        $json = $this->get_url_contents('http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q='.urlencode($productList[0]));
-
-        $dataw[] = json_decode($json);*/
-         //}
-        //var_dump($dataw);
-
-        /*foreach ($dataw as $val){
-            foreach ($val->responseData->results as $result) {
-                $re[] = array('url' => $result->url, 'alt' => $result->title);
-            }
-        }*/
-
-      /*  include('Core/System/GoogleImages.php');
-        $gimage = new \System\GoogleImages();
-        $gimage->get_images(urlencode($productList[1]), 4, 5);*/
-        /*echo "<pre>";
-        print_r($re);
-        echo "</pre>";*/
     }
 
-
+    public function getImageListByApi(){
+        $productList = $this->getInfoFromFile();
+        set_time_limit(0);
+        $result = array();
+        if (LIMIT){
+            for ($j=0; $j < LIMIT; $j++) {
+                array_push($result, $this->getLinksByApi($productList[$j]));
+            }
+        }
+        else {
+            foreach($productList as $product){
+                array_push($result, $this->getLinksByApi($product));
+            }
+        }
+        return $result;
+    }
 
     private function getInfoFromFile(){
         require_once ('Core/System/Classes/PHPExcel/IOFactory.php');
@@ -69,6 +66,18 @@ class Main {
         }
         return $productList;
     }
+
+private function getLinksByApi($request){
+    for ($i = 0; $i<2; $i++){
+    $json = $this->get_url_contents('http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q='.urlencode($request));
+
+    $dataw = json_decode($json);
+        foreach ($dataw->responseData->results as $result) {
+            $re[$request][] = $result->url;
+        }
+    return $re;
+    }
+}
 
 private function getLinks($request, $numLinks){
     require_once 'Core/System/simple_html_dom.php';
@@ -101,21 +110,29 @@ private function getLinks($request, $numLinks){
     }
 
     function imgWriteAction(){
-        if (isset($_POST['link'])){
-            if(is_file("images/".$_POST['imgId'].".jpg")){
-                unlink("images/".$_POST['imgId'].".jpg");
+        //var_dump($_POST);
+
+        if ($_POST['link']){
+            if(is_file("/images/".$_POST['imgId'].".jpg")){
+                unlink("/images/".$_POST['imgId'].".jpg");
                 return 'ok';
             }
             else{
+
                 $image = file_get_contents($_POST['link']);
-                file_put_contents("images/".$_POST['imgId'].".jpg",$image);
-                return 'ok';
+                $er = file_put_contents("images/".$_POST['imgId'].".jpg",$image);
+                echo "$er";
             }
         }
-        return 'false';
+        return 'fall';
     }
-
-
-
+    function clearFolderAction(){
+        $dir = 'images';
+            if ($objs = glob($dir."/*")) {
+                foreach($objs as $obj) {
+                    unlink($obj);
+                }
+            }
+    }
 }
 

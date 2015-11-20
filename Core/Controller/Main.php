@@ -19,12 +19,21 @@ class Main extends Controller {
     }
 
     public function loadList(){
-        $images = $this->model->getImgList();
+        if ($_POST['clear'] == 'on'){
+            $this->model->clearFolderAction();
+        }
+        if ($_POST['api'] == 'on'){
+            $images = $this->model->getImageListByApi();
+        }
+        else {
+            $images = $this->model->getImgList();
+        }
         $this->view->mainView($images);
         //$this->view->loadImgList();
     }
 
     public function writeImg(){
+        //var_dump($_POST);
         $this->model->imgWriteAction();
     }
 
