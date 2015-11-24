@@ -68,15 +68,20 @@ class Main {
     }
 
 private function getLinksByApi($request){
-    for ($i = 0; $i<2; $i++){
-    $json = $this->get_url_contents('http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q='.urlencode($request));
+    $j = 0;
+    for ($i = 0; $i<3; $i++){
+    $json = $this->get_url_contents('http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q='.urlencode($request).'&start='.$j);
 
     $dataw = json_decode($json);
         foreach ($dataw->responseData->results as $result) {
             $re[$request][] = $result->url;
         }
-    return $re;
+        echo"<pre>";
+        var_dump($re);
+        echo"</pre>";
+        $j += 4;
     }
+    return $re;
 }
 
 private function getLinks($request, $numLinks){

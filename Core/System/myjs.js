@@ -8,7 +8,8 @@ $(document).ready(function(){
         var link = $('#' + id).find('.img-rounded').attr('src');
         //alert (id +" "+ link);
         $.post(
-            'http://imagecrawler.azurewebsites.net/main/writeImg',
+            //'http://imagecrawler.azurewebsites.net/main/writeImg',
+            'http://imagefinder/main/writeImg',
             {'link': link,
             'imgId': id},
             function result(data){
