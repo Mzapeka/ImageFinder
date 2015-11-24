@@ -76,9 +76,6 @@ private function getLinksByApi($request){
         foreach ($dataw->responseData->results as $result) {
             $re[$request][] = $result->url;
         }
-        echo"<pre>";
-        var_dump($re);
-        echo"</pre>";
         $j += 4;
     }
     return $re;
